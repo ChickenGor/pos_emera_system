@@ -33,6 +33,7 @@ Typography: Manrope (Google Fonts)
 
 #Project Structure
 pos_emera_system/
+
 ├── index.html       # Main application markup & modals
 
 ├── styles.css       # Styling, layout grids, dark mode, and mobile drawer styles
