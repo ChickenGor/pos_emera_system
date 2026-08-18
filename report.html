@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EMERA POS - Daily Sales Report</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="report-page-body">
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="app-container" id="app-container">
+
+        <!-- ========== MOBILE TOP BAR (Visible only in portrait/mobile view) ========== -->
+        <header class="mobile-top-bar">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+            <h2>EMERA POS - Report</h2>
+        </header>
+
+        <!-- ========== ADMIN SIDEBAR ========== -->
+        <nav class="admin-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>Admin Tools</h3>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+            </div>
+            <div class="sidebar-content">
+                <button type="button" class="sidebar-btn" onclick="window.location.href='index.html'"
+                    title="Back to POS">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m9 15 3-3m0 0 3 3m-3-3v12m-3-9.75h1.5a2.25 2.25 0 0 0 2.25-2.25V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v4.5A2.25 2.25 0 0 0 10.5 12Z" />
+                    </svg>
+                    <span class="btn-text">Back to POS</span>
+                </button>
+
+                <button type="button" class="sidebar-btn btn-dark-mode" id="dark-mode-toggle" onclick="toggleDarkMode()"
+                    title="Dark Mode" aria-pressed="false">
+                    <svg class="btn-icon icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                    </svg>
+                    <svg class="btn-icon icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    </svg>
+                    <span class="btn-text">Dark Mode</span>
+                </button>
+                <div class="sidebar-field" style="padding: 0 16px; margin-top: 10px;">
+                    <label for="language-select" class="btn-text"
+                        style="font-size: 0.8rem; color: var(--muted); display: block; margin-bottom: 4px;">Language</label>
+                    <select id="language-select" onchange="changeLanguage(this.value)"
+                        style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-weight: 600;">
+                        <option value="en">English</option>
+                        <option value="ms">Bahasa Melayu</option>
+                        <option value="zh">中文</option>
+                    </select>
+                </div>
+
+            </div>
+            <!-- Google Sign-In Section in Sidebar -->
+            <div class="sidebar-field" style="padding: 0 16px; margin-top: auto; text-align: center;">
+                <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                    data-callback="handleCredentialResponse" data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin" data-type="standard" data-size="medium" data-theme="filled_black"></div>
+                <div id="user-profile-display"
+                    style="display: none; font-size: 0.85rem; color: white; margin-top: 8px;">
+                    <span id="user-email-text"></span><br>
+                    <button onclick="signOutGoogle()"
+                        style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem; margin-top: 4px;">Sign
+                        Out</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ========== REPORT MAIN CONTENT AREA ========== -->
+        <div class="report-main-content">
+            <header class="report-nav" style="flex-wrap: wrap; gap: 12px;">
+                <h2 style="margin: 0;">Daily Sales & Cash Reconciliation</h2>
+                <div style="display: flex; gap: 8px; align-items: center; margin-left: auto; flex-wrap: wrap;">
+                    <label for="report-date-picker" style="font-weight: 600;">Date:</label>
+                    <input type="date" id="report-date-picker" onchange="loadReportData()"
+                        style="padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel); color: var(--text);">
+
+                    <!-- Download CSV Button -->
+                    <button type="button" onclick="downloadDailyReportCSV()"
+                        style="display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                            stroke="currentColor" style="width: 18px; height: 18px;">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg> Download CSV
+                    </button>
+
+                    <!-- WhatsApp Button -->
+                    <button type="button" onclick="sendReportViaWhatsApp()"
+                        style="display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                            stroke="currentColor" style="width: 18px; height: 18px;">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                        </svg> WhatsApp
+                    </button>
+
+                    <button type="button" onclick="clearTransactionsForSelectedDate()"
+                        style="padding: 8px 12px; background: #ef4444; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Clear</button>
+                </div>
+            </header>
+
+            <!-- Summary Metric Cards -->
+            <div class="report-metrics-grid">
+                <div class="metric-card">
+                    <span>Total Transactions</span>
+                    <h3 id="report-tx-count">0</h3>
+                </div>
+                <div class="metric-card">
+                    <span>Cash Sales (<span id="report-cash-count">0</span> orders)</span>
+                    <h3 id="report-cash-sales" style="color: #023abc;">RM 0.00</h3>
+                </div>
+                <div class="metric-card tng-card">
+                    <span>TNG QR Sales (<span id="report-tng-count">0</span> orders)</span>
+                    <h3 id="report-tng-sales" style="color: #f5f5f5;">RM 0.00</h3>
+                </div>
+                <div class="metric-card revenue-card">
+                    <span>Total Revenue</span>
+                    <h3 id="report-total-sales" style="color: black;">RM 0.00</h3>
+                </div>
+            </div>
+
+            <!-- Cash Float & Reconciliation Section -->
+            <div class="cash-float-section">
+                <div class="float-box">
+                    <label for="starting-float-input"><strong>Starting Cash Float (Drawer Hold):</strong></label>
+                    <div style="display: flex; gap: 10px; margin-top: 6px;">
+                        <input type="number" id="starting-float-input" placeholder="0.00" oninput="saveCashFloat()"
+                            style="padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel); color: var(--text); width: 150px;">
+                        <span style="align-self: center; color: var(--muted); font-size: 0.9rem;">Initial cash left in
+                            register before business starts.</span>
+                    </div>
+                </div>
+                <div class="float-box tally-box">
+                    <span><strong>Expected Cash in Drawer:</strong> <span id="expected-drawer-cash"
+                            style="color: var(--primary);">RM 0.00</span></span>
+                    <span style="font-size: 0.85rem; color: var(--muted);">(Starting Float + Cash Sales)</span>
+                </div>
+            </div>
+
+            <!-- 2-Column Grid: Items Summary & Transaction History -->
+            <div class="report-grid-2col" style="margin-top: 16px;">
+                <div class="report-column section-card" style="height: 340px;">
+                    <h3 style="margin: 0 0 12px; font-size: 1.1rem;">Items Sold Summary</h3>
+                    <div id="report-item-summary-list" class="checkout-receipt-list" style="height: calc(100% - 35px);">
+                    </div>
+                </div>
+                <div class="report-column section-card" style="height: 340px;">
+                    <h3 style="margin: 0 0 12px; font-size: 1.1rem;">Transaction History</h3>
+                    <div id="report-tx-list" class="checkout-receipt-list" style="height: calc(100% - 35px);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="script.js"></script>
+    <script>
+        window.onload = function () {
+            const isDark = localStorage.getItem('dark_mode') === 'true';
+            document.body.classList.toggle('dark', isDark);
+            updateDarkModeButton(isDark);
+
+            // Apply saved language on report page
+            const savedLang = localStorage.getItem('kshf_lang') || 'en';
+            const langSelect = document.getElementById('language-select');
+            if (langSelect) langSelect.value = savedLang;
+            applyTranslations(savedLang);
+
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            document.getElementById('report-date-picker').value = todayStr;
+
+            const savedFloats = JSON.parse(localStorage.getItem('emera_cash_floats')) || {};
+            document.getElementById('starting-float-input').value = savedFloats[todayStr] || '';
+
+            loadReportData();
+        };
+
+        function saveCashFloat() {
+            const date = document.getElementById('report-date-picker').value;
+            const floatVal = document.getElementById('starting-float-input').value;
+            const savedFloats = JSON.parse(localStorage.getItem('emera_cash_floats')) || {};
+            savedFloats[date] = floatVal;
+            localStorage.setItem('emera_cash_floats', JSON.stringify(savedFloats));
+            loadReportData();
+        }
+
+        function loadReportData() {
+            renderDailyReportView();
+        }
+    </script>
+</body>
+
+</html>

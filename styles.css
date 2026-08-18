@@ -1,0 +1,1037 @@
+/* ============================================================
+   CSS VARIABLES & THEME
+   ============================================================ */
+:root {
+    --panel: #ffffff;
+    --panel-alt: #f8fafc;
+    --text: #0f172a;
+    --muted: #64748b;
+    --primary: #2563eb;
+    --primary-strong: #1d4ed8;
+    --accent: #22c55e;
+    --sidebar: #181818;
+    --border: #e2e8f0;
+    --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+/* ============================================================
+   BASE / RESET
+   ============================================================ */
+* {
+    box-sizing: border-box;
+    touch-action: manipulation;
+    font-family: "Manrope", sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: "Manrope", sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f8fafc, #eef2ff);
+    color: var(--text);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark {
+    --panel: #111827;
+    --panel-alt: #1f2937;
+    --text: #f8fafc;
+    --muted: #cbd5e1;
+    --border: rgba(255, 255, 255, 0.08);
+    --shadow: 0 12px 30px rgba(2, 6, 23, 0.45);
+    background: linear-gradient(135deg, #0f172a, #111827);
+    color: var(--text);
+}
+
+/* ============================================================
+   APP LAYOUT
+   ============================================================ */
+.app-container {
+    display: grid;
+    /* Default state: Expanded (280px) */
+    grid-template-columns: 280px minmax(0, 1fr) 330px; 
+    height: 100vh;
+    transition: grid-template-columns 0.3s ease;
+}
+
+.app-container.sidebar-collapsed {
+    /* Collapsed state: Slim (86px) */
+    grid-template-columns: 86px minmax(0, 1fr) 330px;
+}
+/* ============================================================
+   APP LAYOUT
+   ============================================================ */
+.app-container {
+    display: grid;
+    /* Default state: Expanded (280px) */
+    grid-template-columns: 280px minmax(0, 1fr) 330px; 
+    height: 100vh;
+    transition: grid-template-columns 0.3s ease;
+}
+
+.app-container.sidebar-collapsed {
+    /* Collapsed state: Slim (86px) */
+    grid-template-columns: 86px minmax(0, 1fr) 330px;
+}
+
+/* ============================================================
+   ADMIN SIDEBAR
+   ============================================================ */
+.admin-sidebar {
+    background: var(--sidebar);
+    color: white;
+    padding: 20px 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    /* Remove the fixed 86px width here; let it fill the grid column */
+    width: 100%; 
+    position: relative;
+    z-index: 10;
+    transition: padding 0.3s ease;
+}
+
+/* Default state: Text is VISIBLE when expanded */
+.admin-sidebar h3,
+.admin-sidebar .btn-text {
+    display: block; 
+}
+
+/* ============================================================
+   COLLAPSED STATE (Slim Sidebar)
+   ============================================================ */
+.admin-sidebar.collapsed {
+    padding: 20px 10px;
+}
+
+/* Hide text when collapsed */
+.admin-sidebar.collapsed h3,
+.admin-sidebar.collapsed .sidebar-field,
+.admin-sidebar.collapsed .btn-text {
+    display: none;
+}
+
+.admin-sidebar.collapsed .sidebar-header {
+    justify-content: center;
+}
+
+.admin-sidebar.collapsed .sidebar-content {
+    align-items: center;
+}
+
+/* Force buttons to be square icons when collapsed */
+.admin-sidebar.collapsed .sidebar-content button {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    justify-content: center;
+}
+
+/* ============================================================
+   DEFAULT BUTTON STYLES (Expanded View)
+   ============================================================ */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    white-space: nowrap; /* Prevents text from wrapping during animation */
+}
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sidebar-content button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Aligns text left */
+    width: 100%; /* Fill the expanded width */
+    height: 50px; /* Consistent height */
+    padding: 0 16px; /* Horizontal padding for text */
+    gap: 12px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.85);
+    background: transparent;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    white-space: nowrap; /* Prevents text from dropping to next line during animation */
+}
+
+/* Keep your hover and active states the same... */
+
+/* Hover state for desktop/tablets */
+.sidebar-content button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+/* Active / Tap state (Applies background color when pressed) */
+.sidebar-content button:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.sidebar-content .btn-clear:active {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.sidebar-content .btn-dark-mode {
+    margin-top: auto;
+    background: transparent;
+}
+
+.sidebar-content .btn-dark-mode .icon-sun {
+    display: none;
+}
+
+body.dark .sidebar-content .btn-dark-mode .icon-moon {
+    display: none;
+}
+
+body.dark .sidebar-content .btn-dark-mode .icon-sun {
+    display: block;
+}
+
+.btn-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    pointer-events: none;
+}
+.sidebar-toggle {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 12px;
+    background: transparent; /* No solid white background by default */
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+/* Hover state */
+.sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+/* Active/Tap state */
+.sidebar-toggle:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+/* ============================================================
+   EDIT MENU MODAL
+   ============================================================ */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    width: min(560px, 100%);
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.modal-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: var(--panel-alt);
+    color: var(--text);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.edit-menu-list {
+    padding: 16px 20px 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.edit-empty {
+    margin: 0;
+    text-align: center;
+    color: var(--muted);
+    padding: 24px 12px;
+}
+
+.edit-menu-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 100px;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+}
+
+.edit-menu-row input {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.95rem;
+}
+
+.edit-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 8px;
+}
+
+.edit-actions button {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+}
+
+.btn-save-item {
+    background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+}
+
+.btn-delete-item {
+    background: linear-gradient(135deg, #f97316, #ef4444);
+}
+
+.form-modal {
+    width: min(400px, 100%);
+}
+
+.modal-form {
+    padding: 16px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-form input {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel);
+    color: var(--text);
+    font-size: 0.95rem;
+}
+
+.modal-form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.modal-form-actions button {
+    flex: 1;
+    padding: 12px 14px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+}
+
+/* ============================================================
+   MENU SECTION
+   ============================================================ */
+.menu-section {
+    padding: 24px;
+    overflow-y: auto;
+    background: transparent;
+}
+
+.section-card,
+.receipt-card {
+    background: var(--panel);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 18px;
+}
+
+.section-header {
+    margin-bottom: 12px;
+}
+
+.section-header h2 {
+    margin: 0 0 4px;
+    font-size: 1.15rem;
+}
+
+.section-header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.category-tabs button {
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.category-tabs button.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+}
+
+.menu-btn {
+    min-height: 106px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    cursor: pointer;
+    padding: 14px;
+    text-align: left;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+}
+
+.menu-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 22px rgba(15, 23, 42, 0.12);
+}
+
+.menu-btn:active {
+    transform: scale(0.97);
+    background: var(--primary);
+    color: white;
+}
+
+.menu-btn .price {
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.menu-btn:active .price {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    padding: 20px;
+    text-align: center;
+    color: var(--muted);
+    background: var(--panel-alt);
+    border: 1px dashed var(--border);
+    border-radius: 14px;
+}
+
+/* ============================================================
+   RECEIPT / ORDER SECTION
+   ============================================================ */
+.receipt-section {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+}
+
+.receipt-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.receipt-card h2 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+#receipt-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 160px;
+}
+
+.receipt-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+}
+
+.receipt-item.empty {
+    justify-content: center;
+    color: var(--muted);
+}
+
+.total-display {
+    margin-top: auto;
+    padding-top: 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-checkout {
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent), #16a34a);
+    color: white;
+    border: none;
+    font-size: 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Hide top bar by default on desktop/wide screens */
+.mobile-top-bar {
+    display: none;
+}
+
+/* ============================================================
+   EXPANDED CHECKOUT MODAL STYLES
+   ============================================================ */
+.checkout-modal-content {
+    width: min(920px, 95vw) !important;
+    max-height: 90vh;
+}
+
+.checkout-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.checkout-left, .checkout-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.payment-tabs {
+    display: flex;
+    gap: 12px;
+}
+
+.pay-tab {
+    flex: 1;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel-alt);
+    color: var(--text);
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.pay-tab.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.payment-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.cash-input-display {
+    background: var(--panel-alt);
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    text-align: right;
+}
+
+.cash-input-display span {
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.cash-input-display h2 {
+    margin: 6px 0 0;
+    color: var(--primary);
+    font-size: 1.8rem;
+}
+
+.preset-amounts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0px;
+}
+
+.preset-amounts button {
+    padding: 12px;
+    border: 1px solid var(--border);
+
+    background: var(--panel);
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.preset-amounts button:hover {
+    background: var(--panel-alt);
+}
+
+.numpad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0px;
+}
+
+.numpad-grid button {
+    padding: 18px;
+    border: 1px solid var(--border);
+    
+    background: var(--panel);
+    color: var(--text);
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.numpad-grid button:active {
+    background: var(--primary);
+    color: white;
+}
+
+.tng-qr-box {
+    text-align: center;
+    padding: 50px 20px;
+    background: var(--panel-alt);
+    border-radius: 14px;
+    border: 2px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.mock-qr-code {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 24px 0;
+    color: var(--text);
+    padding: 20px;
+    background: var(--panel);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    width: 100%;
+}
+
+.checkout-receipt-list {
+    max-height: 220px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--panel-alt);
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.checkout-item-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+}
+
+.checkout-totals {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-confirm-payment {
+    padding: 18px;
+    background: linear-gradient(135deg, var(--accent), #16a34a);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: auto;
+}
+
+/* ============================================================
+   DAILY REPORT 2-COLUMN LAYOUT
+   ============================================================ */
+.report-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.report-column {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure the scrollable receipt lists fill the height nicely */
+.report-column .checkout-receipt-list {
+    overflow-y: auto;
+}
+
+/* Responsive adjustment: stack into 1 column on smaller portrait devices */
+@media (max-width: 768px) {
+    .report-grid-2col {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .checkout-body {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   MOBILE APP SLIDE-IN DRAWER & TOP BAR (Vertical View)
+   ============================================================ */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 980px) {
+    .app-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 60px minmax(0, 1fr);
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .mobile-top-bar {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: var(--sidebar);
+        color: white;
+        padding: 0 16px;
+        grid-column: 1 / -1;
+        z-index: 50;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .mobile-top-bar h2 {
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .mobile-top-bar .sidebar-toggle {
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        cursor: pointer;
+        font-size: 1.1rem;
+    }
+
+    /* Start hidden off-screen with a proper full drawer width of 250px */
+    .admin-sidebar {
+        position: fixed;
+        top: 60px;
+        left: -250px;
+        width: 250px;
+        height: calc(100vh - 60px);
+        padding: 20px 16px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 100;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.3);
+        background: var(--sidebar);
+    }
+
+    /* Slide it completely onto the screen by 250px when open */
+    .admin-sidebar.mobile-open {
+        transform: translateX(250px);
+    }
+
+    /* Show text labels inside the mobile drawer when opened */
+    .admin-sidebar.mobile-open .btn-text {
+        display: block;
+    }
+
+    .admin-sidebar .sidebar-header {
+        display: none;
+    }
+
+    .admin-sidebar .sidebar-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-sidebar .sidebar-content button {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 12px 14px;
+    }
+
+    .receipt-section {
+        border-left: none;
+        border-top: 1px solid var(--border);
+    }
+
+    .edit-menu-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ============================================================
+   FULL PAGE REPORT STYLES
+   ============================================================ */
+.report-page-body {
+    background: linear-gradient(135deg, #f8fafc, #eef2ff);
+    padding: 20px;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.report-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+}
+
+.report-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--panel);
+    padding: 14px 20px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+
+.report-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.metric-card {
+    background: var(--panel);
+    padding: 16px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.metric-card span {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.metric-card h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.tng-card {
+    background: #023abc;
+    
+}
+.revenue-card {
+    background: #b9ff66;
+    
+}
+.tng-card span{
+    color: rgba(255, 255, 255, 0.9); /* Pure white text for the titles */
+}
+.revenue-card span {
+    color: rgba(0, 0, 0, 0.9); /* Pure white text for the titles */
+}
+
+.cash-float-section {
+    display: flex;
+    gap: 16px;
+    background: var(--panel);
+    padding: 14px 20px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.float-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.tally-box {
+    text-align: right;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 980px) {
+    .report-metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .cash-float-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .tally-box {
+        text-align: left;
+    }
+}
+
+/* ============================================================
+   REPORT PAGE LAYOUT WRAPPER
+   ============================================================ */
+.report-main-content {
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: transparent;
+    height: 100vh;
+}
+
+/* ============================================================
+   REPORT PAGE SPECIFIC LAYOUT FIXES
+   ============================================================ */
+.app-container:has(.report-main-content) {
+    grid-template-columns: 280px minmax(0, 1fr) !important;
+}
+
+.app-container.sidebar-collapsed:has(.report-main-content) {
+    grid-template-columns: 86px minmax(0, 1fr) !important;
+}
+
+#starting-float-input {
+    width: 140px !important;
+    height: 44px !important;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+/* ============================================================
+   FIX REPORT PAGE PADDING & SPACING
+   ============================================================ */
+body.report-page-body {
+    padding: 0 !important; /* Removes the border margin around the entire window */
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.report-main-content {
+    padding: 16px 20px !important; /* Tighter, cleaner padding inside the content pane */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: transparent;
+    height: 100vh;
+}

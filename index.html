@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Emera POS</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Google Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="app-container" id="app-container">
+
+        <!-- ========== MOBILE TOP BAR (Visible only in portrait/mobile view) ========== -->
+        <header class="mobile-top-bar">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+            <h2>EMERA POS</h2>
+        </header>
+
+        <!-- ========== ADMIN SIDEBAR ========== -->
+        <nav class="admin-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>Admin Tools</h3>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+            </div>
+            <div class="sidebar-content">
+                <button type="button" class="sidebar-btn" onclick="openAddItemModal()" title="Add Item">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <span class="btn-text">Add Item</span>
+                </button>
+
+                <button type="button" class="sidebar-btn btn-edit" onclick="openEditMenu()" title="Edit Menu">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                    </svg>
+                    <span class="btn-text">Edit Menu</span>
+                </button>
+
+                <button type="button" class="sidebar-btn btn-clear" onclick="clearOrder()" title="Clear Order">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+                    <span class="btn-text">Clear Order</span>
+                </button>
+
+                <!-- Points directly to report.html full page -->
+                <button type="button" class="sidebar-btn" onclick="window.location.href='report.html'"
+                    title="Daily Report">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v3.75m0 0H3.75m8.25 0h3.75M15 11.25a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    </svg>
+                    <span class="btn-text">Daily Report</span>
+                </button>
+
+                <button type="button" class="sidebar-btn" onclick="exportMenuJSON()" title="Export Menu">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    <span class="btn-text">Export Menu</span>
+                </button>
+
+                <button type="button" class="sidebar-btn" onclick="document.getElementById('import-file-input').click()"
+                    title="Import Menu">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                    </svg>
+                    <span class="btn-text">Import Menu</span>
+                </button>
+
+                <input type="file" id="import-file-input" accept=".json" style="display: none;"
+                    onchange="importMenuJSON(event)">
+
+                <button type="button" class="sidebar-btn btn-dark-mode" id="dark-mode-toggle" onclick="toggleDarkMode()"
+                    title="Dark Mode" aria-pressed="false">
+                    <svg class="btn-icon icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                    </svg>
+                    <svg class="btn-icon icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    </svg>
+                    <span class="btn-text">Dark Mode</span>
+                </button>
+
+                <div class="sidebar-field" style="padding: 0 16px; margin-top: 10px;">
+                    <label for="language-select" class="btn-text"
+                        style="font-size: 0.8rem; color: var(--muted); display: block; margin-bottom: 4px;">Language</label>
+                    <select id="language-select" onchange="changeLanguage(this.value)"
+                        style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-weight: 600;">
+                        <option value="en">English</option>
+                        <option value="ms">Bahasa Melayu</option>
+                        <option value="zh">中文</option>
+                    </select>
+                </div>
+
+                
+            </div>
+            <!-- Google Sign-In Section in Sidebar -->
+                <div class="sidebar-field" style="padding: 0 16px; margin-top: auto; text-align: center;">
+                    <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                        data-callback="handleCredentialResponse" data-auto_prompt="false">
+                    </div>
+                    <div class="g_id_signin" data-type="standard" data-size="medium" data-theme="filled_black"></div>
+                    <div id="user-profile-display"
+                        style="display: none; font-size: 0.85rem; color: white; margin-top: 8px;">
+                        <span id="user-email-text"></span><br>
+                        <button onclick="signOutGoogle()"
+                            style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem; margin-top: 4px;">Sign
+                            Out</button>
+                    </div>
+                </div>
+        </nav>
+
+
+        <!-- ========== MENU SECTION ========== -->
+        <div class="menu-section">
+            <div class="section-card">
+                <div class="section-header">
+                    <div>
+                        <h2>Menu</h2>
+                        <p>Tap an item to add it to the current order.</p>
+                    </div>
+                </div>
+                <div id="category-tabs" class="category-tabs"></div>
+                <div class="grid-container" id="menu-grid"></div>
+            </div>
+        </div>
+
+        <!-- ========== RECEIPT / ORDER SECTION ========== -->
+        <div class="receipt-section">
+            <div class="receipt-card">
+                <h2>Current Order</h2>
+                <div id="receipt-items-list"></div>
+                <div class="total-display"><span>Total</span><span id="grand-total">RM 0.00</span></div>
+                <button class="btn-checkout" onclick="openCheckoutModal()">Checkout</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========== ADD ITEM MODAL ========== -->
+    <div id="add-item-modal" class="modal" style="display:none;" onclick="closeAddItemOnBackdrop(event)">
+        <div class="modal-content form-modal">
+            <div class="modal-header">
+                <h3>Add Menu Item</h3>
+                <button type="button" class="modal-close" onclick="closeAddItemModal()" title="Close">&times;</button>
+            </div>
+            <form class="modal-form" onsubmit="saveNewItemFromModal(event)">
+                <input type="text" id="modal-item-name" placeholder="Item Name" required>
+                <input type="text" id="modal-item-cat" placeholder="Category">
+                <input type="number" id="modal-item-price" placeholder="Price (RM)" step="0.01" min="0" required>
+                <div class="modal-form-actions">
+                    <button type="submit" class="btn-save-item">Add Item</button>
+                    <button type="button" class="btn-delete-item" onclick="closeAddItemModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== EDIT MENU MODAL ========== -->
+    <div id="edit-menu-modal" class="modal" style="display:none;" onclick="closeEditMenuOnBackdrop(event)">
+        <div class="modal-content edit-menu-modal">
+            <div class="modal-header">
+                <h3>Edit Menu</h3>
+                <button type="button" class="modal-close" onclick="closeEditMenu()" title="Close">&times;</button>
+            </div>
+            <div id="edit-menu-list" class="edit-menu-list"></div>
+        </div>
+    </div>
+
+    <!-- ========== CHECKOUT PAYMENT MODAL ========== -->
+    <div id="checkout-modal" class="modal" style="display:none;" onclick="closeCheckoutOnBackdrop(event)">
+        <div class="modal-content checkout-modal-content">
+            <div class="modal-header">
+                <h3>Checkout & Payment</h3>
+                <button type="button" class="modal-close" onclick="closeCheckoutModal()" title="Close">&times;</button>
+            </div>
+            <div class="checkout-body">
+                <!-- LEFT SIDE: Payment Methods & Cash Calculator -->
+                <div class="checkout-left">
+                    <div class="payment-tabs">
+                        <button type="button" class="pay-tab active" onclick="selectPaymentMethod('Cash')">Cash</button>
+                        <button type="button" class="pay-tab" onclick="selectPaymentMethod('TNG')">Touch 'n Go
+                            QR</button>
+                    </div>
+
+                    <!-- Cash Payment Section -->
+                    <div id="cash-payment-section" class="payment-section">
+                        <div class="cash-input-display">
+                            <span>Customer Paid:</span>
+                            <h2 id="cash-tendered-display">RM 0.00</h2>
+                        </div>
+                        <div class="preset-amounts">
+                            <button type="button" onclick="addCashTendered(10)">RM 10</button>
+                            <button type="button" onclick="addCashTendered(20)">RM 20</button>
+                            <button type="button" onclick="addCashTendered(50)">RM 50</button>
+                            <button type="button" onclick="addCashTendered(100)">RM 100</button>
+                            <button type="button" onclick="setExactCash()">Exact</button>
+                            <button type="button" onclick="clearCashTendered()" class="btn-clear-tender">Clear</button>
+                        </div>
+                        <div class="numpad-grid">
+                            <button type="button" onclick="pressNumpad('1')">1</button>
+                            <button type="button" onclick="pressNumpad('2')">2</button>
+                            <button type="button" onclick="pressNumpad('3')">3</button>
+                            <button type="button" onclick="pressNumpad('4')">4</button>
+                            <button type="button" onclick="pressNumpad('5')">5</button>
+                            <button type="button" onclick="pressNumpad('6')">6</button>
+                            <button type="button" onclick="pressNumpad('7')">7</button>
+                            <button type="button" onclick="pressNumpad('8')">8</button>
+                            <button type="button" onclick="pressNumpad('9')">9</button>
+                            <button type="button" onclick="pressNumpad('.')">.</button>
+                            <button type="button" onclick="pressNumpad('0')">0</button>
+                            <button type="button" onclick="pressNumpad('back')">⌫</button>
+                        </div>
+                    </div>
+
+                    <!-- TNG QR Section (Shown when TNG is selected) -->
+                    <div id="tng-payment-section" class="payment-section" style="display: none;">
+                        <div class="tng-qr-box">
+                            <p>Scan with Touch 'n Go eWallet</p>
+                            <img src="tng-qr-placeholder.png" alt="TNG QR Code" class="tng-qr-image">
+                            <p class="muted-qr-text">Waiting for customer to complete payment...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDE: Receipt Summary & Complete Button -->
+                <div class="checkout-right">
+                    <h4>Order Summary</h4>
+                    <div id="checkout-receipt-list" class="checkout-receipt-list"></div>
+
+                    <div class="checkout-totals">
+                        <div class="summary-row"><span>Payment Method:</span><span id="summary-payment-method"
+                                style="color: var(--primary);">Cash</span></div>
+                        <div class="summary-row"><span>Total Amount:</span><span id="checkout-grand-total">RM
+                                0.00</span></div>
+                        <div class="summary-row" id="change-row"><span>Change Due:</span><span
+                                id="change-due-display">RM 0.00</span></div>
+                    </div>
+
+                    <button type="button" class="btn-confirm-payment" onclick="completeCheckout()">Confirm & Print
+                        Receipt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
