@@ -1,7 +1,7 @@
 /* ============================================================
    STATE
    ============================================================ */
-let menuItems = JSON.parse(localStorage.getItem('kshf_menu')) || [];
+let menuItems = JSON.parse(localStorage.getItem('menu')) || [];
 let currentOrder = {};
 let currentCategory = 'All';
 
@@ -9,10 +9,20 @@ let currentCategory = 'All';
    UI TOGGLES (sidebar, dark mode)
    ============================================================ */
 function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('collapsed');
-    document.getElementById('app-container').classList.toggle('sidebar-collapsed');
-}
+    const sidebar = document.getElementById('sidebar');
+    const container = document.getElementById('app-container');
+    const isMobile = window.innerWidth <= 980;
 
+    if (isMobile) {
+        // Toggle the mobile app drawer slide-in state and dark backdrop overlay
+        sidebar.classList.toggle('mobile-open');
+        document.getElementById('sidebar-overlay').classList.toggle('active');
+    } else {
+        // Standard desktop/wide screen sidebar collapse toggle
+        sidebar.classList.toggle('collapsed');
+        container.classList.toggle('sidebar-collapsed');
+    }
+}
 function toggleDarkMode() {
     const isDark = !document.body.classList.contains('dark');
     document.body.classList.toggle('dark', isDark);
@@ -60,17 +70,34 @@ function renderTabs() {
 }
 
 /* ============================================================
-   ADD MENU ITEM (admin sidebar)
+   ADD MENU ITEM MODAL HANDLING
    ============================================================ */
-function isSidebarCollapsed() {
-    return document.getElementById('sidebar').classList.contains('collapsed');
+function handleAddMenuItem() {
+    openAddItemModal();
 }
 
-function handleAddMenuItem() {
-    if (isSidebarCollapsed()) {
-        openAddItemModal();
-    } else {
-        addNewMenuItem();
+function openAddItemModal() {
+    const modal = document.getElementById('add-item-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        const nameInput = document.getElementById('modal-item-name');
+        if (nameInput) nameInput.focus();
+    }
+}
+
+function closeAddItemModal() {
+    const modal = document.getElementById('add-item-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.getElementById('modal-item-name').value = '';
+        document.getElementById('modal-item-cat').value = '';
+        document.getElementById('modal-item-price').value = '';
+    }
+}
+
+function closeAddItemOnBackdrop(event) {
+    if (event.target.id === 'add-item-modal') {
+        closeAddItemModal();
     }
 }
 
@@ -83,43 +110,20 @@ function addNewMenuItemFromValues(name, cat, price) {
     return true;
 }
 
-function addNewMenuItem() {
-    const name = document.getElementById('new-item-name').value.trim();
-    const cat = document.getElementById('new-item-cat').value.trim() || 'General';
-    const price = parseFloat(document.getElementById('new-item-price').value);
-    if (!addNewMenuItemFromValues(name, cat, price)) return;
-
-    document.getElementById('new-item-name').value = '';
-    document.getElementById('new-item-cat').value = '';
-    document.getElementById('new-item-price').value = '';
-}
-
-function openAddItemModal() {
-    document.getElementById('add-item-modal').style.display = 'flex';
-    document.getElementById('modal-item-name').focus();
-}
-
-function closeAddItemModal() {
-    document.getElementById('add-item-modal').style.display = 'none';
-    document.getElementById('modal-item-name').value = '';
-    document.getElementById('modal-item-cat').value = '';
-    document.getElementById('modal-item-price').value = '';
-}
-
-function closeAddItemOnBackdrop(event) {
-    if (event.target.id === 'add-item-modal') closeAddItemModal();
-}
-
 function saveNewItemFromModal(event) {
     event.preventDefault();
     const name = document.getElementById('modal-item-name').value.trim();
     const cat = document.getElementById('modal-item-cat').value.trim() || 'General';
     const price = parseFloat(document.getElementById('modal-item-price').value);
+
     if (!addNewMenuItemFromValues(name, cat, price)) return;
 
     closeAddItemModal();
 }
 
+/* ============================================================
+   SAVE MENU ITEMS TO LOCAL STORAGE
+   ============================================================ */
 function saveMenuItems() {
     localStorage.setItem('kshf_menu', JSON.stringify(menuItems));
 }
@@ -211,6 +215,9 @@ function updateReceipt() {
     const list = document.getElementById('receipt-items-list');
     let total = 0;
 
+    // Save to localStorage for persistence
+    localStorage.setItem('current_order', JSON.stringify(currentOrder));
+
     if (!Object.keys(currentOrder).length) {
         list.innerHTML = '<div class="receipt-item empty">No items added yet.</div>';
     } else {
@@ -225,7 +232,59 @@ function updateReceipt() {
 
 function clearOrder() {
     currentOrder = {};
+    localStorage.removeItem('current_order');
     updateReceipt();
+}
+
+/*  =============================================================
+    Export menu items as JSON
+    =============================================================*/
+function exportMenuJSON() {
+    // Prompt the user for a filename (defaulting to 'menu_backup')
+    let fileName = prompt("Enter file name for your menu backup:", "menu_backup");
+
+    // If user cancelled or left it blank, abort or use default
+    if (fileName === null) return;
+    fileName = fileName.trim() || "menu_backup";
+
+    // Ensure it ends with .json
+    if (!fileName.toLowerCase().endsWith('.json')) {
+        fileName += '.json';
+    }
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(menuItems, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", fileName);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
+
+/*  =============================================================
+    Import menu items from JSON
+    =============================================================*/
+
+function importMenuJSON(event) {
+    const fileReader = new FileReader();
+    if (event.target.files[0]) {
+        fileReader.readAsText(event.target.files[0], "UTF-8");
+        fileReader.onload = (e) => {
+            try {
+                const importedItems = JSON.parse(e.target.result);
+                if (Array.isArray(importedItems)) {
+                    menuItems = importedItems;
+                    saveMenuItems();
+                    initSystem(currentCategory);
+                    alert('Menu successfully imported!');
+                } else {
+                    alert('Invalid menu file format.');
+                }
+            } catch (error) {
+                alert('Error parsing JSON file.');
+            }
+        };
+    }
 }
 
 /* ============================================================
@@ -237,4 +296,4 @@ window.onload = () => {
     updateDarkModeButton(isDark);
     initSystem();
     updateReceipt();
-};
+}

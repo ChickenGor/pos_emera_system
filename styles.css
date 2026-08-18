@@ -9,7 +9,7 @@
     --primary: #2563eb;
     --primary-strong: #1d4ed8;
     --accent: #22c55e;
-    --sidebar: #111827;
+    --sidebar: #181818;
     --border: #e2e8f0;
     --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 }
@@ -20,11 +20,12 @@
 * {
     box-sizing: border-box;
     touch-action: manipulation;
+    font-family: "Manrope", sans-serif;
 }
 
 body {
     margin: 0;
-    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    font-family: "Manrope", sans-serif;
     height: 100vh;
     overflow: hidden;
     background: linear-gradient(135deg, #f8fafc, #eef2ff);
@@ -48,12 +49,29 @@ body.dark {
    ============================================================ */
 .app-container {
     display: grid;
-    grid-template-columns: 280px minmax(0, 1fr) 330px;
+    /* Default state: Expanded (280px) */
+    grid-template-columns: 280px minmax(0, 1fr) 330px; 
     height: 100vh;
     transition: grid-template-columns 0.3s ease;
 }
 
 .app-container.sidebar-collapsed {
+    /* Collapsed state: Slim (86px) */
+    grid-template-columns: 86px minmax(0, 1fr) 330px;
+}
+/* ============================================================
+   APP LAYOUT
+   ============================================================ */
+.app-container {
+    display: grid;
+    /* Default state: Expanded (280px) */
+    grid-template-columns: 280px minmax(0, 1fr) 330px; 
+    height: 100vh;
+    transition: grid-template-columns 0.3s ease;
+}
+
+.app-container.sidebar-collapsed {
+    /* Collapsed state: Slim (86px) */
     grid-template-columns: 86px minmax(0, 1fr) 330px;
 }
 
@@ -63,21 +81,32 @@ body.dark {
 .admin-sidebar {
     background: var(--sidebar);
     color: white;
-    padding: 20px;
+    padding: 20px 16px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    min-width: 0;
+    gap: 15px;
+    /* Remove the fixed 86px width here; let it fill the grid column */
+    width: 100%; 
     position: relative;
     z-index: 10;
+    transition: padding 0.3s ease;
 }
 
+/* Default state: Text is VISIBLE when expanded */
+.admin-sidebar h3,
+.admin-sidebar .btn-text {
+    display: block; 
+}
+
+/* ============================================================
+   COLLAPSED STATE (Slim Sidebar)
+   ============================================================ */
 .admin-sidebar.collapsed {
-    padding: 12px 8px;
-    align-items: center;
+    padding: 20px 10px;
 }
 
+/* Hide text when collapsed */
 .admin-sidebar.collapsed h3,
 .admin-sidebar.collapsed .sidebar-field,
 .admin-sidebar.collapsed .btn-text {
@@ -89,18 +118,20 @@ body.dark {
 }
 
 .admin-sidebar.collapsed .sidebar-content {
-    width: 100%;
     align-items: center;
 }
 
+/* Force buttons to be square icons when collapsed */
 .admin-sidebar.collapsed .sidebar-content button {
-    width: 46px;
-    height: 46px;
+    width: 50px;
+    height: 50px;
     padding: 0;
-    margin: 0;
-    flex-shrink: 0;
+    justify-content: center;
 }
 
+/* ============================================================
+   DEFAULT BUTTON STYLES (Expanded View)
+   ============================================================ */
 .sidebar-header {
     display: flex;
     justify-content: space-between;
@@ -110,16 +141,7 @@ body.dark {
 .sidebar-header h3 {
     margin: 0;
     font-size: 1rem;
-}
-
-.sidebar-toggle {
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.12);
-    color: white;
-    cursor: pointer;
+    white-space: nowrap; /* Prevents text from wrapping during animation */
 }
 
 .sidebar-content {
@@ -128,51 +150,51 @@ body.dark {
     gap: 12px;
 }
 
-.sidebar-content input {
-    padding: 12px 14px;
-    border: none;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.12);
-    color: white;
-}
-
-.sidebar-content input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-}
-
 .sidebar-content button {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 14px;
+    justify-content: flex-start; /* Aligns text left */
+    width: 100%; /* Fill the expanded width */
+    height: 50px; /* Consistent height */
+    padding: 0 16px; /* Horizontal padding for text */
+    gap: 12px;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     font-weight: 600;
     cursor: pointer;
+    color: rgba(255, 255, 255, 0.85);
+    background: transparent;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    white-space: nowrap; /* Prevents text from dropping to next line during animation */
+}
+
+/* Keep your hover and active states the same... */
+
+/* Hover state for desktop/tablets */
+.sidebar-content button:hover {
+    background: rgba(255, 255, 255, 0.08);
     color: white;
-    background: linear-gradient(135deg, var(--primary), var(--primary-strong));
 }
 
-.sidebar-content .btn-clear {
-    background: linear-gradient(135deg, #f97316, #ef4444);
+/* Active / Tap state (Applies background color when pressed) */
+.sidebar-content button:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
 }
 
-.sidebar-content .btn-edit {
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+.sidebar-content .btn-clear:active {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
 }
 
 .sidebar-content .btn-dark-mode {
     margin-top: auto;
-    background: rgba(255, 255, 255, 0.12);
+    background: transparent;
 }
 
 .sidebar-content .btn-dark-mode .icon-sun {
     display: none;
-}
-
-body.dark .sidebar-content .btn-dark-mode {
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
 }
 
 body.dark .sidebar-content .btn-dark-mode .icon-moon {
@@ -188,6 +210,33 @@ body.dark .sidebar-content .btn-dark-mode .icon-sun {
     height: 22px;
     flex-shrink: 0;
     pointer-events: none;
+}
+.sidebar-toggle {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 12px;
+    background: transparent; /* No solid white background by default */
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+/* Hover state */
+.sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+/* Active/Tap state */
+.sidebar-toggle:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
 }
 
 /* ============================================================
@@ -507,18 +556,92 @@ body.dark .sidebar-content .btn-dark-mode .icon-sun {
     cursor: pointer;
 }
 
+/* Hide top bar by default on desktop/wide screens */
+.mobile-top-bar {
+    display: none;
+}
+
 /* ============================================================
-   RESPONSIVE
+   MOBILE APP SLIDE-IN DRAWER & TOP BAR (Vertical View)
    ============================================================ */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
 @media (max-width: 980px) {
     .app-container {
         grid-template-columns: 1fr;
-        height: auto;
-        min-height: 100vh;
+        grid-template-rows: 60px minmax(0, 1fr);
+        height: 100vh;
+        overflow: hidden;
     }
 
-    .app-container.sidebar-collapsed {
-        grid-template-columns: 1fr;
+    /* Permanent top header bar in portrait view */
+    .mobile-top-bar {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: var(--sidebar);
+        color: white;
+        padding: 0 16px;
+        grid-column: 1 / -1;
+        z-index: 50;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .mobile-top-bar h2 {
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .mobile-top-bar .sidebar-toggle {
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        cursor: pointer;
+        font-size: 1.1rem;
+    }
+
+    /* Slide-in sidebar drawer matched to slim 86px width */
+    .admin-sidebar {
+        position: fixed;
+        top: 60px;
+        left: -86px;
+        width: 86px;
+        height: calc(100vh - 60px);
+        padding: 16px 10px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 100;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.3);
+        background: var(--sidebar);
+    }
+
+    .admin-sidebar.mobile-open {
+        transform: translateX(86px);
+    }
+
+    /* Hide duplicate header since top bar handles it */
+    .admin-sidebar .sidebar-header {
+        display: none;
+    }
+
+    .admin-sidebar .sidebar-content {
+        flex-direction: column;
+        align-items: center;
     }
 
     .receipt-section {
