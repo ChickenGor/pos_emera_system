@@ -1,4 +1,4 @@
-# pos_emera_system
+# EMERA POS
 A lightweight, modern, and tablet-optimized Point of Sale (POS) web application built with vanilla JavaScript, HTML, and CSS. Designed specifically for small businesses and food stalls with touch-first ergonomics, an app-like sliding sidebar drawer, dark mode support, and local data persistence.
 
 # Features
@@ -34,5 +34,7 @@ Typography: Manrope (Google Fonts)
 #Project Structure
 pos_emera_system/
 ├── index.html       # Main application markup & modals
+
 ├── styles.css       # Styling, layout grids, dark mode, and mobile drawer styles
+
 └── script.js        # State logic, order handling, local storage, and file import/export
